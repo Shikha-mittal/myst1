@@ -1,2 +1,38 @@
 testing file
 
+/**
+ * Created by delhivery on 1/12/14.
+ */
+'use strict';
+
+angular.module('lmapApp')
+.factory('LoginService', [
+  '$rootScope',
+  '$resource',
+  '$http',
+  '$state',
+  '$log',
+  function ($rootScope, $resource, $http, $state, $log) {
+    var LoginService = {
+        
+        Signin: $resource('/auth/login', {}, { signinUser: { method: 'POST' } })
+
+      };
+
+    var session = {};
+    session.isLoggedIn = false;
+    session.currentUser = null;
+
+    session.signinUser = function (userdata) {
+      LoginService.Signin.signinUser(userdata, function (success) {
+        $log.debug(success);
+        $rootScope.$broadcast('signinDone', success);
+      }, function (error) {
+        $log.debug(error);
+        $rootScope.$broadcast('signinNotDone', error);
+      });
+    };
+
+    return session;
+  }
+]);
